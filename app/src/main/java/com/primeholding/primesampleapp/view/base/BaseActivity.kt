@@ -1,7 +1,6 @@
 package com.primeholding.primesampleapp.view.base
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.primeholding.primesampleapp.model.ApiError
 import io.reactivex.disposables.CompositeDisposable
