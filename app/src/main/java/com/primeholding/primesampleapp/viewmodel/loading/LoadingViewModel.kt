@@ -1,6 +1,7 @@
 package com.primeholding.primesampleapp.viewmodel.loading
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -39,8 +40,8 @@ interface LoadingType {
 class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, LoadingOutput, LoadingType {
 
     //region Input Output
-    override val input = this
-    override val output = this
+    override val input: LoadingInput = this
+    override val output: LoadingOutput = this
     //endregion
 
     //region Subjects consuming from Input
@@ -70,15 +71,23 @@ class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, Loadin
         isLoadingObservable =
                 addedObservables
                     .flatMap { it ->
+                        Log.d("", "")
                         return@flatMap Observable.merge(it)
                     }
+
+
+
 
         isLoadingObservable
             .delay(100, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
             .bind(loadingCount)
             .addTo(compositeDisposable)
 
-        isLoading = loadingCount.map { it > 0 }
+        isLoading = loadingCount
+            .map { it > 0 }.map { it ->
+                Log.d("", "")
+                return@map it
+            }.distinctUntilChanged()
 
     }
 
