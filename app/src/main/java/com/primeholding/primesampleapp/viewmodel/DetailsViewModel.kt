@@ -45,8 +45,8 @@ class DetailsViewModel @Inject constructor(
 
 //region Input Output
 
-    override val input = this
-    override val output = this
+    override val input: DetailsInput = this
+    override val output: DetailsOutput = this
 
 //endregion
 

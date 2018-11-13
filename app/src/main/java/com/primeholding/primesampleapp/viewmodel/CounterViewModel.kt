@@ -38,8 +38,8 @@ class CounterViewModel @Inject constructor() : ViewModel(), CounterInput, Counte
 
 //region Input Output
 
-    override val input = this
-    override val output = this
+    override val input: CounterInput = this
+    override val output: CounterOutput = this
 
 //endregion
 
