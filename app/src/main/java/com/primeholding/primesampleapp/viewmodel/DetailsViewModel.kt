@@ -4,6 +4,7 @@ package com.primeholding.primesampleapp.viewmodel
 import androidx.lifecycle.ViewModel
 import com.primeholding.primesampleapp.misc.extension.whenLoading
 import com.primeholding.primesampleapp.misc.extension.whenSuccess
+import com.primeholding.primesampleapp.model.ApiResult
 import com.primeholding.primesampleapp.repo.DetailsRepository
 import com.primeholding.primesampleapp.viewmodel.loading.LoadingViewModel
 import io.reactivex.Observable
@@ -43,38 +44,32 @@ class DetailsViewModel @Inject constructor(
     loadingViewModel: LoadingViewModel
 ) : ViewModel(), DetailsInput, DetailsOutput, DetailsType {
 
-//region Input Output
-
+    //region Input Output
     override val input: DetailsInput = this
     override val output: DetailsOutput = this
-
-//endregion
+    //endregion
 
     //region Subjects consuming from Input
     private val fetchSubject = PublishSubject.create<Unit>()
-//endregion
+    //endregion
 
     //region Output
     override val details: Observable<String>
     override val isLoading: Observable<Boolean> = loadingViewModel.output.isLoading
-//endregion
+    //endregion
 
-//region Locally used
-
+    //region Locally used
     private val compositeDisposable = CompositeDisposable()
-
-//endregion
+    private  val loadingViewModel: LoadingViewModel
+   //endregion
 
     init {
-        val dataRequest = fetchSubject
-            .flatMap { detailsRepository.fetchDetails() }
-            .share()
+        val dataRequest = fetchSubject.mapToDetails(detailsRepository)
 
-        details = dataRequest
-            .whenSuccess()
-            .startWith(String.empty)
+        details = dataRequest.whenSuccessWithInitial()
 
-        loadingViewModel.input.addLoadingObservable(dataRequest.whenLoading())
+        this.loadingViewModel = loadingViewModel
+        loadingViewModel.addLoadingObservable(dataRequest.whenLoading())
     }
 
 
@@ -87,7 +82,10 @@ class DetailsViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        //Clear all view models' bindings
         compositeDisposable.dispose()
+        //Clear all LoadingViewModel's bindings
+        loadingViewModel.onCleared()
     }
 }
 
@@ -99,8 +97,16 @@ val String.Companion.empty: String
         return ""
     }
 
-//Sample extension returning an Observable
-//private fun DetailsType.getName(): Observable<String> {
-//    return Observable.just(this.javaClass.simpleName)
-//            .map { it -> it.toUpperCase() }
-//}
+/**
+ * Map an unit to a details as getting data from the [repo]
+ */
+private fun Observable<Unit>.mapToDetails(repo: DetailsRepository): Observable<ApiResult<String>> {
+    return flatMap { repo.fetchDetails() }.share()
+}
+
+/**
+ * Map to success as starting with an empty string
+ */
+private fun Observable<ApiResult<String>>.whenSuccessWithInitial(): Observable<String> {
+    return whenSuccess().startWith(String.empty)
+}

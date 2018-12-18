@@ -99,7 +99,7 @@ class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, Loadin
     // endregion
 
 
-    override fun onCleared() {
+    public override fun onCleared() {
         super.onCleared()
         compositeDisposable.dispose()
     }
