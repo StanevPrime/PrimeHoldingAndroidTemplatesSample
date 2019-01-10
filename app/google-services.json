@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "100766068701",
+    "firebase_url": "https://sample-app-f5b48.firebaseio.com",
+    "project_id": "sample-app-f5b48",
+    "storage_bucket": "sample-app-f5b48.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100766068701:android:d700f67f060f795d",
+        "android_client_info": {
+          "package_name": "com.primeholding.primesampleapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "100766068701-o2ur1qnoq7718aafv48mbt9j2lv91jq8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLmKsKtkQQ8xooRv247QYG6XKEIyUOyuU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

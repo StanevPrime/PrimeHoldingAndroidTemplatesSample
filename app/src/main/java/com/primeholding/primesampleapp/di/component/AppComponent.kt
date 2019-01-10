@@ -3,6 +3,7 @@ package com.primeholding.primesampleapp.di.component
 import android.content.Context
 import com.primeholding.primesampleapp.application.BaseApplication
 import com.primeholding.primesampleapp.di.module.AppModule
+import com.primeholding.primesampleapp.di.module.FirebaseModule
 import com.primeholding.primesampleapp.di.module.NetworkModule
 import com.primeholding.primesampleapp.di.module.ViewModelModule
 import com.primeholding.primesampleapp.view.CounterActivity
@@ -12,7 +13,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-@Component(modules = [AppModule::class, NetworkModule::class, ViewModelModule::class])
+@Component(modules = [AppModule::class, NetworkModule::class, ViewModelModule::class, FirebaseModule::class])
 interface AppComponent {
 
     fun context(): Context
