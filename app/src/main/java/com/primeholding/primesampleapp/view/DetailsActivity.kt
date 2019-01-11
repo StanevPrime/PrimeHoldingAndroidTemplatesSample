@@ -3,7 +3,6 @@ package com.primeholding.primesampleapp.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -25,11 +24,13 @@ import javax.inject.Inject
 
 class DetailsActivity : BaseActivity() {
 
-    private lateinit var activityBinding: ActivityDetailsBinding
+    lateinit var activityBinding: ActivityDetailsBinding
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: DetailsType by lazy { ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java) }
+    private val viewModel: DetailsType by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(DetailsViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +40,8 @@ class DetailsActivity : BaseActivity() {
 
     override fun bind() {
         viewModel
-                .bind(activityBinding)
-                .addTo(compositeDisposable)
+            .bind(this)
+            .addTo(compositeDisposable)
         viewModel.input.fetch()
     }
 
@@ -52,32 +53,42 @@ class DetailsActivity : BaseActivity() {
     }
 }
 
-private fun DetailsType.bind(binding: ActivityDetailsBinding): List<Disposable> {
+private fun DetailsType.bind(activity: DetailsActivity): List<Disposable> {
     return listOf(
-            output.bind(binding),
-            input.bind(binding)
+        output.bind(activity),
+        output.bind(activity.activityBinding),
+        input.bind(activity.activityBinding)
     ).flatten()
 }
 
 private fun DetailsInput.bind(binding: ActivityDetailsBinding): List<Disposable> {
     return listOf(
-            binding.detailsRefreshButton.rxClick.subscribe {
-                fetch()
-            }
+        binding.detailsRefreshButton.rxClick.subscribe {
+            fetch()
+        }
     )
 }
 
 private fun DetailsOutput.bind(binding: ActivityDetailsBinding): List<Disposable> {
     return listOf(
-            details
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { binding.detailsDetailsTextView.text = it },
-            isLoading
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError { Log.d("err", it.localizedMessage) }
-                    .subscribe {
-                        binding.detailsProgressBar.visibility().accept(it)
-                    }
+        details
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { binding.detailsDetailsTextView.text = it },
+        isLoading
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.detailsProgressBar.visibility().accept(it)
+            }
+    )
+}
 
+
+private fun DetailsOutput.bind(activity: DetailsActivity): List<Disposable> {
+    return listOf(
+        errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                activity.renderErrorState(it)
+            }
     )
 }

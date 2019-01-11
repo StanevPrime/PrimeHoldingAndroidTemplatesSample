@@ -1,4 +1,6 @@
-package com.primeholding.primesampleapp.model
+package com.primeholding.primesampleapp.model.api
+
+import com.primeholding.primesampleapp.model.error.IError
 
 sealed class ApiResult<Data> {
     /**
@@ -15,7 +17,7 @@ sealed class ApiResult<Data> {
     /**
      * Represents an Error
      * @param error the error to be passed to the view
-     * @see ApiError
+     * @see IError
      */
-    data class Error<Data>(var error: ApiError) : ApiResult<Data>()
+    data class Error<Data>(var error: IError) : ApiResult<Data>()
 }

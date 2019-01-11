@@ -2,9 +2,11 @@ package com.primeholding.primesampleapp.viewmodel
 
 
 import androidx.lifecycle.ViewModel
+import com.primeholding.primesampleapp.misc.extension.whenError
 import com.primeholding.primesampleapp.misc.extension.whenLoading
 import com.primeholding.primesampleapp.misc.extension.whenSuccess
-import com.primeholding.primesampleapp.model.ApiResult
+import com.primeholding.primesampleapp.model.api.ApiResult
+import com.primeholding.primesampleapp.model.error.IError
 import com.primeholding.primesampleapp.repo.DetailsRepository
 import com.primeholding.primesampleapp.viewmodel.loading.LoadingViewModel
 import io.reactivex.Observable
@@ -30,6 +32,10 @@ interface DetailsOutput {
      * Observable whether application is loading
      */
     val isLoading: Observable<Boolean>
+    /**
+     * Observable with errors
+     */
+    val errorStream: Observable<IError>
 }
 
 interface DetailsType {
@@ -41,7 +47,7 @@ interface DetailsType {
 //endregion
 class DetailsViewModel @Inject constructor(
     detailsRepository: DetailsRepository,
-    loadingViewModel: LoadingViewModel
+    private val loadingViewModel: LoadingViewModel
 ) : ViewModel(), DetailsInput, DetailsOutput, DetailsType {
 
     //region Input Output
@@ -56,19 +62,21 @@ class DetailsViewModel @Inject constructor(
     //region Output
     override val details: Observable<String>
     override val isLoading: Observable<Boolean> = loadingViewModel.output.isLoading
+    override val errorStream: Observable<IError>
+
     //endregion
 
     //region Locally used
     private val compositeDisposable = CompositeDisposable()
-    private  val loadingViewModel: LoadingViewModel
-   //endregion
+    //endregion
 
     init {
-        val dataRequest = fetchSubject.mapToDetails(detailsRepository)
+        val dataRequest = fetchSubject.mapToDetails(detailsRepository).share()
 
         details = dataRequest.whenSuccessWithInitial()
 
-        this.loadingViewModel = loadingViewModel
+        errorStream = dataRequest.whenError()
+
         loadingViewModel.addLoadingObservable(dataRequest.whenLoading())
     }
 

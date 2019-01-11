@@ -2,7 +2,7 @@ package com.primeholding.primesampleapp.view.base
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
-import com.primeholding.primesampleapp.model.ApiError
+import com.primeholding.primesampleapp.model.error.IError
 import io.reactivex.disposables.CompositeDisposable
 
 
@@ -36,7 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
         //TODO set up your way of showing loading either here or in child activities
     }
 
-    open fun renderErrorState(error: ApiError) {
+    open fun renderErrorState(error: IError) {
         //TODO set up your way of showing errors either here or in child activities
     }
 

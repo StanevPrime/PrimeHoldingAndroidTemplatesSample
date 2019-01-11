@@ -1,7 +1,7 @@
 package com.primeholding.primesampleapp.repo
 
-import com.primeholding.primesampleapp.model.ApiError
-import com.primeholding.primesampleapp.model.ApiResult
+import com.primeholding.primesampleapp.model.api.ApiError
+import com.primeholding.primesampleapp.model.api.ApiResult
 import io.reactivex.Observable
 import retrofit2.HttpException
 import java.util.concurrent.TimeUnit

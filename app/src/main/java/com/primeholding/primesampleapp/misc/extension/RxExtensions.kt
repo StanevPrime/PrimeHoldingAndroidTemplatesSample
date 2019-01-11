@@ -1,8 +1,8 @@
 package com.primeholding.primesampleapp.misc.extension
 
 import android.util.Log
-import com.primeholding.primesampleapp.model.ApiError
-import com.primeholding.primesampleapp.model.ApiResult
+import com.primeholding.primesampleapp.model.api.ApiResult
+import com.primeholding.primesampleapp.model.error.IError
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -72,7 +72,7 @@ fun <T> Observable<ApiResult<T>>.whenSuccess(): Observable<T> =
 /**
  * Filter when an [ApiResult] is [ApiResult.Error]
  */
-fun <T> Observable<ApiResult<T>>.whenError(): Observable<ApiError> =
+fun <T> Observable<ApiResult<T>>.whenError(): Observable<IError> =
     filter { it -> it is ApiResult.Error }
         .map { it -> it as ApiResult.Error<T> }
         .map { it -> it.error }

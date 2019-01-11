@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-//TODO add to your app component
 @Module
 class FirebaseModule {
 

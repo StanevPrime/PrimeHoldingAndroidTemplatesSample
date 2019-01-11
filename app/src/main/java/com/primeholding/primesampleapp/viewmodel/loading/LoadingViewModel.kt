@@ -1,7 +1,6 @@
 package com.primeholding.primesampleapp.viewmodel.loading
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,9 +16,9 @@ import javax.inject.Inject
 //region View Model Interfaces
 interface LoadingInput {
     /**
-     * Adds a new loading observable
+     * Adds new loading observables
      */
-    fun addLoadingObservable(observable: Observable<Boolean>)
+    fun addLoadingObservable(vararg observable: Observable<Boolean>)
 }
 
 interface LoadingOutput {
@@ -45,7 +44,7 @@ class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, Loadin
     //endregion
 
     //region Subjects consuming from Input
-    private val newLoadingObservable = PublishSubject.create<Observable<Boolean>>()
+    private val newLoadingObservable = PublishSubject.create<Array<out Observable<Boolean>>>()
 //endregion
 
     //region Output
@@ -64,14 +63,13 @@ class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, Loadin
         newLoadingObservable
             .subscribe {
                 val observables = addedObservables.value!!
-                observables.add(it)
+                observables.addAll(it)
                 addedObservables.onNext(observables)
             }.addTo(compositeDisposable)
 
         isLoadingObservable =
                 addedObservables
                     .flatMap { it ->
-                        Log.d("", "")
                         return@flatMap Observable.merge(it)
                     }
 
@@ -84,16 +82,15 @@ class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, Loadin
             .addTo(compositeDisposable)
 
         isLoading = loadingCount
-            .map { it > 0 }.map { it ->
-                Log.d("", "")
-                return@map it
-            }.distinctUntilChanged()
+            .map { it > 0 }
+            .distinctUntilChanged()
+            .share()
 
     }
 
 
     //region Input methods
-    override fun addLoadingObservable(observable: Observable<Boolean>) {
+    override fun addLoadingObservable(vararg observable: Observable<Boolean>) {
         newLoadingObservable.onNext(observable)
     }
     // endregion
@@ -107,11 +104,12 @@ class LoadingViewModel @Inject constructor() : ViewModel(), LoadingInput, Loadin
 
 private fun Observable<Boolean>.bind(count: BehaviorSubject<Int>): Disposable =
     map { it ->
-        val increment = if (it) {
-            1
-        } else {
-            -1
-        }
+        val increment =
+            if (it) {
+                1
+            } else {
+                -1
+            }
         return@map if (count.value != null) {
             count.value!!.plus(increment)
         } else {
