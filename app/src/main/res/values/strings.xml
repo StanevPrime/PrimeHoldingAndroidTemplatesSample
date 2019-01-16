@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Prime Sample App</string>
+    <string name="increment">Increment</string>
+    <string name="decrement">Decrement</string>
+    <string name="current_count_format">Current count is %1s</string>
+    <string name="go_to_details">Go to details</string>
+    <string name="activity_counter_name">Counter</string>
+    <string name="activity_details_title">Details</string>
+    <string name="refresh">Refresh</string>
+</resources>
